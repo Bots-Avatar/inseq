@@ -4,4 +4,4 @@ captum>=0.6
 scipy>=1.10
 transformers>=4.27
 tqdm>=4.65
-pandas>=2.0
+pandas>=1.5
