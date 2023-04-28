@@ -1,0 +1,7 @@
+torch>=1.13
+torchtyping>=0.1
+captum>=0.6
+scipy>=1.10
+transformers>=4.27
+tqdm>=4.65
+pandas>=2.0
