@@ -158,7 +158,7 @@ class AttributionModel(ABC, torch.nn.Module):
         attr_pos_start: Optional[int] = None,
         attr_pos_end: Optional[int] = None,
         show_progress: bool = True,
-        pretty_progress: bool = True,
+        pretty_progress: bool = False,
         output_step_attributions: bool = False,
         attribute_target: bool = False,
         step_scores: List[str] = [],
