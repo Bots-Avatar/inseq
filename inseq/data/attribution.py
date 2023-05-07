@@ -236,8 +236,7 @@ class FeatureAttributionSequenceOutput(TensorWrapper, AggregableMixin):
         Returns:
             :obj:`str`: The HTML code of the visualization if :obj:`return_html` is set to True, otherwise None.
         """
-        from inseq.inseq import show_attributions
-        # from inseq import show_attributions
+        from inseq import show_attributions
 
         # If no aggregator is specified, the default aggregator for the class is used
         aggregated = self.aggregate(aggregator, **kwargs) if do_aggregation else self
