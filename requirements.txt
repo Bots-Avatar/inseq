@@ -1,6 +1,6 @@
 torch>=1.13
 captum>=0.6
-pandas>=2.0
+pandas>=1.5
 matplotlib>=3.5
 torch>=1.13
 transformers>=4.28.1
