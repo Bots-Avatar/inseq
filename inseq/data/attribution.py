@@ -254,8 +254,7 @@ class FeatureAttributionSequenceOutput(TensorWrapper, AggregableMixin):
             inp_ts=None,
             gen_ts=None,
             do_aggregation: bool = True,
-            **kwargs,
-    ):
+            **kwargs):
 
         # If no aggregator is specified, the default aggregator for the class is used
         aggregated = self.aggregate(aggregator, **kwargs) if do_aggregation else self
@@ -604,8 +603,7 @@ class FeatureAttributionOutput:
         for attr, inp_t, gen_t in zip(self.sequence_attributions,
                                       self.info['input_texts'],
                                       self.info['generated_texts']):
-            rez.append(
-                attr._get_attributions(min_val, max_val, display, return_html, aggregator, inp_t, gen_t, **kwargs))
+            rez.append(attr._get_attributions(aggregator, inp_t, gen_t, **kwargs))
         return rez
 
     @classmethod
