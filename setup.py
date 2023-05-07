@@ -6,10 +6,10 @@ except ImportError:
 REQUIREMENTS = [i.strip() for i in open("requirements.txt").readlines()]
 
 setup(
-    name='am_inseq',
+    name='inseq',
     version='1.0.0',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    packages=find_namespace_packages(include=['am_inseq', 'am_inseq.*']),
+    packages=find_namespace_packages(include=['inseq', 'inseq.*']),
     install_requires=REQUIREMENTS
 )

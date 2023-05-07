@@ -1,17 +1,17 @@
-from transformers import GPT2Tokenizer
-
-from am_inseq import load_model
+from inseq.inseq import load_model
 
 model_name = "sberbank-ai/rugpt3small_based_on_gpt2"
 
-model = load_model(model_name, "integrated_gradients")
-tokenizer = GPT2Tokenizer.from_pretrained(model_name)
+model = load_model(model=model_name,
+                   detokenizer=model_name,
+                   attribution_method="integrated_gradients")
 
 out = model.attribute(
-  input_texts ="сколько стоит ",
-  generated_texts="сколько стоит торт?",
+  input_texts="сколько стоит торт?",
+  generated_texts="сколько стоит торт? 350 рублей",
   n_steps=10
 )
 
-print(out.get_attributions(tokenizer))
-print(out.get_dataframe(tokenizer))
+print(out.show())
+print(out.get_attributions())
+

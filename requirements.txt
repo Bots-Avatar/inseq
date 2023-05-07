@@ -1,7 +1,9 @@
 torch>=1.13
-torchtyping>=0.1
 captum>=0.6
+pandas>=2.0
+matplotlib>=3.5
+torch>=1.13
+transformers>=4.28.1
+torchtyping>=0.1.4
 scipy>=1.10
-transformers>=4.27
-tqdm>=4.65
-pandas>=1.5
+rich
