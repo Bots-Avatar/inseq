@@ -9,6 +9,9 @@ from typing import Any, Dict, List, Optional, Type, Union
 import numpy as np
 import torch
 
+from .aggregator import AggregableMixin, Aggregator, AggregatorPipeline, SequenceAttributionAggregator
+from .batch import Batch, BatchEncoding
+from .data_utils import TensorWrapper
 from ..utils import (
     abs_max,
     drop_padding,
@@ -35,9 +38,6 @@ from ..utils.typing import (
     TextInput,
     TokenWithId,
 )
-from .aggregator import AggregableMixin, Aggregator, AggregatorPipeline, SequenceAttributionAggregator
-from .batch import Batch, BatchEncoding
-from .data_utils import TensorWrapper
 
 FeatureAttributionInput = Union[TextInput, BatchEncoding, Batch]
 
@@ -106,12 +106,12 @@ class FeatureAttributionSequenceOutput(TensorWrapper, AggregableMixin):
 
     @classmethod
     def from_step_attributions(
-        cls,
-        attributions: List["FeatureAttributionStepOutput"],
-        tokenized_target_sentences: Optional[List[List[TokenWithId]]] = None,
-        pad_id: Optional[Any] = None,
-        has_bos_token: bool = True,
-        attr_pos_end: Optional[int] = None,
+            cls,
+            attributions: List["FeatureAttributionStepOutput"],
+            tokenized_target_sentences: Optional[List[List[TokenWithId]]] = None,
+            pad_id: Optional[Any] = None,
+            has_bos_token: bool = True,
+            attr_pos_end: Optional[int] = None,
     ) -> List["FeatureAttributionSequenceOutput"]:
         """Converts a list of :class:`~inseq.data.attribution.FeatureAttributionStepOutput` objects containing multiple
         examples outputs per step into a list of :class:`~inseq.data.attribution.FeatureAttributionSequenceOutput` with
@@ -159,8 +159,8 @@ class FeatureAttributionSequenceOutput(TensorWrapper, AggregableMixin):
             for seq_id in range(num_sequences):
                 # Remove padding from tensor
                 filtered_source_attribution = source_attributions[seq_id][
-                    : len(sources[seq_id]), : len(targets[seq_id]), ...
-                ]
+                                              : len(sources[seq_id]), : len(targets[seq_id]), ...
+                                              ]
                 seq_attributions[seq_id].source_attributions = filtered_source_attribution
         if attr.target_attributions is not None:
             target_attributions = get_sequences_from_batched_steps(
@@ -172,8 +172,8 @@ class FeatureAttributionSequenceOutput(TensorWrapper, AggregableMixin):
                 start_idx = max(pos_start) - pos_start[seq_id]
                 end_idx = start_idx + len(tokenized_target_sentences[seq_id])
                 target_attributions[seq_id] = target_attributions[seq_id][
-                    start_idx:end_idx, : len(targets[seq_id]), ...  # noqa: E203
-                ]
+                                              start_idx:end_idx, : len(targets[seq_id]), ...  # noqa: E203
+                                              ]
                 if target_attributions[seq_id].shape[0] != len(tokenized_target_sentences[seq_id]):
                     empty_final_row = torch.ones(1, *target_attributions[seq_id].shape[1:]) * float("nan")
                     target_attributions[seq_id] = torch.cat([target_attributions[seq_id], empty_final_row], dim=0)
@@ -196,21 +196,21 @@ class FeatureAttributionSequenceOutput(TensorWrapper, AggregableMixin):
                 )
                 for seq_id in range(num_sequences):
                     seq_scores[seq_id][seq_score_name] = out_seq_scores[seq_id][
-                        : len(sources[seq_id]), : len(targets[seq_id]), ...
-                    ]
+                                                         : len(sources[seq_id]), : len(targets[seq_id]), ...
+                                                         ]
             for seq_id in range(num_sequences):
                 seq_attributions[seq_id].sequence_scores = seq_scores[seq_id]
         return seq_attributions
 
     def show(
-        self,
-        min_val: Optional[int] = None,
-        max_val: Optional[int] = None,
-        display: bool = True,
-        return_html: Optional[bool] = False,
-        aggregator: Union[AggregatorPipeline, Type[Aggregator]] = None,
-        do_aggregation: bool = True,
-        **kwargs,
+            self,
+            min_val: Optional[int] = None,
+            max_val: Optional[int] = None,
+            display: bool = True,
+            return_html: Optional[bool] = False,
+            aggregator: Union[AggregatorPipeline, Type[Aggregator]] = None,
+            do_aggregation: bool = True,
+            **kwargs,
     ) -> Optional[str]:
         """Visualize the attributions.
 
@@ -241,60 +241,49 @@ class FeatureAttributionSequenceOutput(TensorWrapper, AggregableMixin):
         # If no aggregator is specified, the default aggregator for the class is used
         aggregated = self.aggregate(aggregator, **kwargs) if do_aggregation else self
         if (aggregated.source_attributions is not None and aggregated.source_attributions.shape[1] == 0) or (
-            aggregated.target_attributions is not None and aggregated.target_attributions.shape[1] == 0
+                aggregated.target_attributions is not None and aggregated.target_attributions.shape[1] == 0
         ):
             tokens = "".join(tid.token for tid in self.target)
             logger.warning(f"Found empty attributions, skipping attribution matching generation: {tokens}")
         else:
             return show_attributions(aggregated, min_val, max_val, display, return_html)
 
-
-
     def _get_attributions(
             self,
-            min_val: Optional[int] = None,
-            max_val: Optional[int] = None,
-            display: bool = True,
-            return_html: Optional[bool] = False,
             aggregator: Union[AggregatorPipeline, Type[Aggregator]] = None,
-            inp_ts = None,
-            gen_ts= None,
+            inp_ts=None,
+            gen_ts=None,
             do_aggregation: bool = True,
             **kwargs,
-        ):
+    ):
 
-
-            # If no aggregator is specified, the default aggregator for the class is used
-            aggregated = self.aggregate(aggregator, **kwargs) if do_aggregation else self
-            if (aggregated.source_attributions is not None and aggregated.source_attributions.shape[1] == 0) or (
+        # If no aggregator is specified, the default aggregator for the class is used
+        aggregated = self.aggregate(aggregator, **kwargs) if do_aggregation else self
+        if (aggregated.source_attributions is not None and aggregated.source_attributions.shape[1] == 0) or (
                 aggregated.target_attributions is not None and aggregated.target_attributions.shape[1] == 0
-            ):
-                tokens = "".join(tid.token for tid in self.target)
-                logger.warning(f"Found empty attributions, skipping attribution matching generation: {tokens}")
-            # else:
-            #     return show_attributions(aggregated, min_val, max_val, display, return_html)
+        ):
+            tokens = "".join(tid.token for tid in self.target)
+            logger.warning(f"Found empty attributions, skipping attribution matching generation: {tokens}")
+        # else:
+        #     return show_attributions(aggregated, min_val, max_val, display, return_html)
 
+        AttributionInfo = namedtuple('AttributionInfo', [
+            'input_labels', 'generated_labels_full', 'generated_labels_only',
+            'input_text', 'generated_text_full', 'generated_text_only', 'array'
+        ])
 
+        attr = aggregated  # self.sequence_attributions[i]
 
-            AttributionInfo = namedtuple('AttributionInfo', [
-                'input_labels', 'generated_labels_full', 'generated_labels_only',
-                'input_text', 'generated_text_full', 'generated_text_only', 'array'
-            ])
-
-
-            attr = aggregated# self.sequence_attributions[i]
-
-            attribution_info = AttributionInfo(
-                input_labels=aggregated.source,
-                generated_labels_full=attr.target,
-                generated_labels_only=attr.target[attr.attr_pos_start : attr.attr_pos_end],
-                input_text=inp_ts,
-                generated_text_full=gen_ts,
-                generated_text_only=gen_ts[len(inp_ts):],
-                array=np.nan_to_num(attr.target_attributions.numpy().astype(float))
-            )
-            return attribution_info
-
+        attribution_info = AttributionInfo(
+            input_labels=aggregated.source,
+            generated_labels_full=attr.target,
+            generated_labels_only=attr.target[attr.attr_pos_start: attr.attr_pos_end],
+            input_text=inp_ts,
+            generated_text_full=gen_ts,
+            generated_text_only=gen_ts[len(inp_ts):],
+            array=np.nan_to_num(attr.target_attributions.numpy().astype(float))
+        )
+        return attribution_info
 
     @property
     def minimum(self) -> float:
@@ -333,10 +322,10 @@ class FeatureAttributionSequenceOutput(TensorWrapper, AggregableMixin):
         return self
 
     def get_scores_dicts(
-        self,
-        aggregator: Union[AggregatorPipeline, Type[Aggregator]] = None,
-        do_aggregation: bool = True,
-        **kwargs,
+            self,
+            aggregator: Union[AggregatorPipeline, Type[Aggregator]] = None,
+            do_aggregation: bool = True,
+            **kwargs,
     ) -> Dict[str, Dict[str, Dict[str, float]]]:
         # If no aggregator is specified, the default aggregator for the class is used
         aggr = self.aggregate(aggregator, **kwargs) if do_aggregation else self
@@ -384,8 +373,8 @@ class FeatureAttributionStepOutput(TensorWrapper):
         self.to(torch.float32)
 
     def remap_from_filtered(
-        self,
-        target_attention_mask: TargetIdsTensor,
+            self,
+            target_attention_mask: TargetIdsTensor,
     ) -> None:
         """Remaps the attributions to the original shape of the input sequence."""
         if self.source_attributions is not None:
@@ -468,13 +457,13 @@ class FeatureAttributionOutput:
         return True
 
     def save(
-        self,
-        path: PathLike,
-        overwrite: bool = False,
-        compress: bool = False,
-        ndarray_compact: bool = True,
-        use_primitives: bool = False,
-        split_sequences: bool = False,
+            self,
+            path: PathLike,
+            overwrite: bool = False,
+            compress: bool = False,
+            ndarray_compact: bool = True,
+            use_primitives: bool = False,
+            split_sequences: bool = False,
     ) -> None:
         """
         Save class contents to a JSON file.
@@ -529,8 +518,8 @@ class FeatureAttributionOutput:
 
     @staticmethod
     def load(
-        path: PathLike,
-        decompress: bool = False,
+            path: PathLike,
+            decompress: bool = False,
     ) -> "FeatureAttributionOutput":
         """Load saved attribution output into a new :class:`~inseq.data.FeatureAttributionOutput` object.
 
@@ -551,9 +540,9 @@ class FeatureAttributionOutput:
         return out
 
     def aggregate(
-        self,
-        aggregator: Union[AggregatorPipeline, Type[Aggregator]] = None,
-        **kwargs,
+            self,
+            aggregator: Union[AggregatorPipeline, Type[Aggregator]] = None,
+            **kwargs,
     ) -> "FeatureAttributionOutput":
         """Aggregate the sequence attributions using one or more aggregators.
 
@@ -571,13 +560,13 @@ class FeatureAttributionOutput:
         return aggregated
 
     def show(
-        self,
-        min_val: Optional[int] = None,
-        max_val: Optional[int] = None,
-        display: bool = True,
-        return_html: Optional[bool] = False,
-        aggregator: Union[AggregatorPipeline, Type[Aggregator]] = None,
-        **kwargs,
+            self,
+            min_val: Optional[int] = None,
+            max_val: Optional[int] = None,
+            display: bool = True,
+            return_html: Optional[bool] = False,
+            aggregator: Union[AggregatorPipeline, Type[Aggregator]] = None,
+            **kwargs,
     ) -> Optional[str]:
         """Visualize the sequence attributions.
 
@@ -603,19 +592,20 @@ class FeatureAttributionOutput:
             return out_str
 
     def get_attributions(
-        self,
-        min_val: Optional[int] = None,
-        max_val: Optional[int] = None,
-        display: bool = True,
-        return_html: Optional[bool] = False,
-        aggregator: Union[AggregatorPipeline, Type[Aggregator]] = None,
-        **kwargs,
+            self,
+            min_val: Optional[int] = None,
+            max_val: Optional[int] = None,
+            display: bool = True,
+            return_html: Optional[bool] = False,
+            aggregator: Union[AggregatorPipeline, Type[Aggregator]] = None,
+            **kwargs,
     ):
         rez = []
         for attr, inp_t, gen_t in zip(self.sequence_attributions,
                                       self.info['input_texts'],
                                       self.info['generated_texts']):
-            rez.append( attr._get_attributions(min_val, max_val, display, return_html, aggregator,inp_t, gen_t, **kwargs))
+            rez.append(
+                attr._get_attributions(min_val, max_val, display, return_html, aggregator, inp_t, gen_t, **kwargs))
         return rez
 
     @classmethod
@@ -663,7 +653,7 @@ class FeatureAttributionOutput:
             self.sequence_attributions[i] = attr.weight_attributions(step_score_id)
 
     def get_scores_dicts(
-        self, aggregator: Union[AggregatorPipeline, Type[Aggregator]] = None, do_aggregation: bool = True, **kwargs
+            self, aggregator: Union[AggregatorPipeline, Type[Aggregator]] = None, do_aggregation: bool = True, **kwargs
     ) -> List[Dict[str, Dict[str, Dict[str, float]]]]:
         """Get all computed scores (attributions and step scores) for all sequences as a list of dictionaries.
 
