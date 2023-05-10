@@ -1,6 +1,6 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/inseq-team/inseq/main/docs/source/images/inseq_logo.png" width="300"/>
-  <h4>Intepretability for Sequence Generation Models 🔍</h4>
+  <h4>Intepretability for Sequence Generation Models _</h4>
 </div>
 <br/>
 <div align="center">
@@ -41,7 +41,7 @@ pip install inseq
 pip install git+https://github.com/inseq-team/inseq.git
 ```
 
-Install extras for visualization in Jupyter Notebooks and 🤗 datasets attribution as `pip install inseq[notebook,datasets]`.
+Install extras for visualization in Jupyter Notebooks and _ datasets attribution as `pip install inseq[notebook,datasets]`.
 
 <details>
   <summary>Dev Installation</summary>
@@ -106,19 +106,19 @@ model.attribute(
 
 ## Features
 
-- 🚀 Feature attribution of sequence generation for most `ForConditionalGeneration` (encoder-decoder) and `ForCausalLM` (decoder-only) models from 🤗 Transformers
+- _ Feature attribution of sequence generation for most `ForConditionalGeneration` (encoder-decoder) and `ForCausalLM` (decoder-only) models from _ Transformers
 
-- 🚀 Support for multiple feature attribution methods, sourced in part from [Captum](https://captum.ai/docs/introduction)
+- _ Support for multiple feature attribution methods, sourced in part from [Captum](https://captum.ai/docs/introduction)
 
-- 🚀 Post-processing of attribution maps via `Aggregator` classes.
+- _ Post-processing of attribution maps via `Aggregator` classes.
 
-- 🚀 Attribution visualization in notebooks, browser and command line.
+- _ Attribution visualization in notebooks, browser and command line.
 
-- 🚀 Attribute single examples or entire 🤗 datasets with the Inseq CLI.
+- _ Attribute single examples or entire _ datasets with the Inseq CLI.
 
-- 🚀 Custom attribution of target functions, supporting advanced use cases such as contrastive and uncertainty-weighted feature attributions.
+- _ Custom attribution of target functions, supporting advanced use cases such as contrastive and uncertainty-weighted feature attributions.
 
-- 🚀 Extraction and visualization of custom step scores (e.g. probability, entropy) alongsides attribution maps.
+- _ Extraction and visualization of custom step scores (e.g. probability, entropy) alongsides attribution maps.
 
 ### Supported methods
 
@@ -189,11 +189,11 @@ Refer to the [documentation](https://inseq.readthedocs.io/examples/custom_attrib
 
 ## Using the Inseq client
 
-The Inseq library also provides useful client commands to enable repeated attribution of individual examples and even entire 🤗 datasets directly from the console. See the available options by typing `inseq -h` in the terminal after installing the package.
+The Inseq library also provides useful client commands to enable repeated attribution of individual examples and even entire _ datasets directly from the console. See the available options by typing `inseq -h` in the terminal after installing the package.
 
 For now, two commands are supported:
 
-- `ìnseq attribute`: Wraps the `attribute` method shown above, requires explicit inputs to be attributed.
+- `inseq attribute`: Wraps the `attribute` method shown above, requires explicit inputs to be attributed.
 
 - `inseq attribute-dataset`: Enables attribution for a full dataset using Hugging Face `datasets.load_dataset`.
 
@@ -216,11 +216,11 @@ inseq attribute-dataset \
 
 ## Planned Development
 
-- ⚙️ Support more attention-based and occlusion-based feature attribution methods (documented in [#107](https://github.com/inseq-team/inseq/issues/107) and [#108](https://github.com/inseq-team/inseq/issues/108)).
+- __ Support more attention-based and occlusion-based feature attribution methods (documented in [#107](https://github.com/inseq-team/inseq/issues/107) and [#108](https://github.com/inseq-team/inseq/issues/108)).
 
-- ⚙️ Interoperability with [ferret](https://ferret.readthedocs.io/en/latest/) for attribution plausibility and faithfulness evaluation.
+- __ Interoperability with [ferret](https://ferret.readthedocs.io/en/latest/) for attribution plausibility and faithfulness evaluation.
 
-- ⚙️ Rich and interactive visualizations in a tabbed interface using [Gradio Blocks](https://gradio.app/docs/#blocks).
+- __ Rich and interactive visualizations in a tabbed interface using [Gradio Blocks](https://gradio.app/docs/#blocks).
 
 ## Contributing
 
